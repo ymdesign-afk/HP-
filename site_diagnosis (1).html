@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ウェブサイト目的診断</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Montserrat:wght@600;700&display=swap');
+:root{--g1:#1a4d35;--g2:#2d7a52;--g3:#4aab78;--gp:#e8f4ee;--gx:#f2faf5;--s1:#1e2a32;--s2:#3d4f5c;--s3:#6b8090;--sp:#e8edf0;--red:#e05555;--yellow:#f5a623;--white:#fff;--r:12px;--rs:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:#f0f4f2;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;color:var(--s1)}
+.wrapper{width:100%;max-width:860px}
+.header{text-align:center;margin-bottom:2.5rem}
+.header-label{display:inline-block;background:var(--g2);color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;padding:4px 14px;border-radius:20px;margin-bottom:.75rem;font-family:'Montserrat',sans-serif;text-transform:uppercase}
+.header h1{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:700;color:var(--g1);line-height:1.2;margin-bottom:.5rem}
+.header p{color:var(--s3);font-size:13px;line-height:1.7}
+.progress-wrap{background:var(--sp);border-radius:20px;height:6px;margin-bottom:2rem;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:20px;transition:width .5s ease}
+.step-label{display:flex;justify-content:space-between;font-size:12px;color:var(--s3);margin-bottom:.5rem}
+.card{background:var(--white);border-radius:var(--r);padding:2rem 2.5rem;box-shadow:0 2px 16px rgba(30,42,50,.07);animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.question-num{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--g2);text-transform:uppercase;margin-bottom:.5rem}
+.question-text{font-size:20px;font-weight:700;color:var(--s1);margin-bottom:.4rem;line-height:1.4}
+.question-sub{font-size:13px;color:var(--s3);margin-bottom:1.75rem}
+.multi-hint{display:inline-block;background:#fff7e6;color:#b07800;font-size:11px;padding:3px 10px;border-radius:20px;margin-bottom:1.25rem;border:1px solid #f5d080}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:1.5px solid var(--sp);border-radius:var(--rs);cursor:pointer;transition:all .18s;background:var(--white);text-align:left;width:100%}
+.choice:hover{border-color:var(--g3);background:var(--gx)}
+.choice.selected{border-color:var(--g2);background:var(--gp)}
+.choice-icon{width:36px;height:36px;border-radius:8px;background:var(--sp);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .18s}
+.choice.selected .choice-icon{background:var(--g3)}
+.choice-title{font-size:15px;font-weight:700;color:var(--s1);margin-bottom:2px}
+.choice-desc{font-size:12px;color:var(--s3);line-height:1.5}
+.btn-row{display:flex;justify-content:flex-end;gap:10px;margin-top:1.75rem}
+.btn-back{padding:10px 20px;border:1.5px solid var(--sp);border-radius:var(--rs);background:none;color:var(--s3);font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
+.btn-back:hover{border-color:var(--s3);color:var(--s1)}
+.btn-next{padding:10px 28px;border:none;border-radius:var(--rs);background:var(--g2);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .15s}
+.btn-next:hover{background:var(--g1)}
+.btn-next:disabled{background:var(--sp);color:var(--s3);cursor:not-allowed}
+.result-header{text-align:center;margin-bottom:1.75rem}
+.result-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:5px 16px;border-radius:20px;margin-bottom:.75rem;font-family:'Montserrat',sans-serif;text-transform:uppercase}
+.result-type-name{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;color:var(--g1);margin-bottom:.4rem}
+.result-type-desc{font-size:13px;color:var(--s3);line-height:1.8;max-width:560px;margin:0 auto}
+.section-title{font-size:11px;font-weight:700;color:var(--s3);letter-spacing:.1em;text-transform:uppercase;font-family:'Montserrat',sans-serif;margin-bottom:1rem;border-bottom:1px solid var(--sp);padding-bottom:.5rem}
+.section-note{font-size:11px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0;margin-left:8px}
+.issues-section{margin-bottom:1.75rem}
+.issue-row{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.issue-label{font-size:13px;font-weight:700;width:160px;flex-shrink:0;color:var(--s1)}
+.issue-bar-wrap{flex:1;background:var(--sp);border-radius:20px;height:10px;overflow:hidden}
+.issue-bar{height:100%;border-radius:20px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.issue-priority{font-size:11px;font-weight:700;width:50px;text-align:right;flex-shrink:0}
+.divider{height:1px;background:var(--sp);margin:1.5rem 0}
+
+/* アコーディオンカード */
+.imp-card{border-radius:var(--rs);border:1px solid var(--sp);overflow:hidden;margin-bottom:10px}
+.imp-card-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:background .15s;user-select:none}
+.imp-card.ph .imp-card-header{border-left:4px solid var(--red);background:#fff8f8}
+.imp-card.pm .imp-card-header{border-left:4px solid var(--yellow);background:#fffdf0}
+.imp-card.pl .imp-card-header{border-left:4px solid var(--g3);background:var(--gx)}
+.imp-card.ph .imp-card-header:hover{background:#ffefef}
+.imp-card.pm .imp-card-header:hover{background:#fffae0}
+.imp-card.pl .imp-card-header:hover{background:#eaf5ef}
+.imp-rank{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;width:26px;flex-shrink:0;color:var(--sp)}
+.imp-icon-wrap{font-size:20px;flex-shrink:0}
+.imp-header-body{flex:1;min-width:0}
+.imp-header-title{font-size:14px;font-weight:700;color:var(--s1);margin-bottom:2px}
+.imp-header-sub{font-size:12px;color:var(--s3);line-height:1.4}
+.imp-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:4px}
+.th{background:#fde8e8;color:var(--red)}
+.tm{background:#fff3cd;color:#b07800}
+.tl{background:var(--gp);color:var(--g1)}
+.imp-arrow{font-size:12px;color:var(--s3);transition:transform .3s;flex-shrink:0;width:20px;text-align:center}
+.imp-arrow.open{transform:rotate(180deg)}
+
+/* アコーディオン本体 */
+.imp-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.imp-body.open{max-height:1200px}
+.imp-body-inner{padding:4px 18px 18px 18px;border-top:1px solid var(--sp)}
+.detail-block{margin-top:14px}
+.detail-block-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;margin-bottom:8px}
+.db-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.db-good .db-icon{background:#e8f4ee}
+.db-bad  .db-icon{background:#fde8e8}
+.db-fix  .db-icon{background:#e6f1fb}
+.db-eff  .db-icon{background:#fff3cd}
+.db-good .detail-block-title span{color:var(--g2)}
+.db-bad  .detail-block-title span{color:var(--red)}
+.db-fix  .detail-block-title span{color:#185fa5}
+.db-eff  .detail-block-title span{color:#b07800}
+.dl{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0;padding:0}
+.dl li{font-size:12px;color:var(--s2);line-height:1.6;padding-left:14px;position:relative}
+.dl li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%}
+.db-good .dl li::before{background:var(--g3)}
+.db-bad  .dl li::before{background:var(--red)}
+.db-fix  .dl li::before{background:#378add}
+.db-eff  .dl li::before{background:var(--yellow)}
+
+/* 効果 */
+.effect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.effect-card{background:var(--gx);border-radius:var(--rs);padding:14px;text-align:center;border:1px solid #cde8da}
+.effect-val{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:var(--g1);line-height:1;margin-bottom:4px}
+.effect-label{font-size:11px;color:var(--s3);line-height:1.4}
+
+/* ボタン系 */
+.restart-btn{width:100%;padding:12px;border:1.5px solid var(--sp);border-radius:var(--rs);background:none;color:var(--s3);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;margin-top:.5rem}
+.restart-btn:hover{border-color:var(--g3);color:var(--g2)}
+.all-toggle-btn{width:100%;padding:11px;border:1.5px dashed #ccd6da;border-radius:var(--rs);background:none;color:var(--s3);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;margin:4px 0 10px}
+.all-toggle-btn:hover{border-color:var(--g3);color:var(--g2)}
+
+/* スタート画面 */
+.start-card{text-align:center;padding:3rem 2.5rem}
+.start-logo{width:64px;height:64px;background:var(--gp);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 1.5rem;border:2px solid #cde8da}
+.start-card h2{font-size:20px;font-weight:700;color:var(--s1);margin-bottom:.5rem;line-height:1.4}
+.start-card p{font-size:13px;color:var(--s3);line-height:1.8;margin-bottom:1.5rem;max-width:460px;margin-left:auto;margin-right:auto}
+.start-steps{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem}
+.start-step-num{width:28px;height:28px;border-radius:50%;background:var(--gp);color:var(--g1);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:1px solid #cde8da;font-family:'Montserrat',sans-serif}
+.start-step-label{font-size:11px;color:var(--s3)}
+.btn-start{padding:14px 40px;border:none;border-radius:var(--rs);background:var(--g2);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .15s}
+.btn-start:hover{background:var(--g1)}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="header-label">Website Diagnosis</div>
+    <h1>ウェブサイト<br>目的診断ツール</h1>
+    <p>4つの質問に答えるだけで、<br>貴社のウェブサイトに必要な改善が明確になります。</p>
+  </div>
+  <div id="app"></div>
+</div>
+<script>
+const DETAIL={
+  design:{label:'デザイン・見た目',icon:'🎨',
+    good:['グループ構成や事業内容が整理されてテキストで記載されている','ナビゲーションがシンプルで迷いにくい構造になっている'],
+    bad:['写真・動画がほぼ皆無。施設・車両・作業の様子が一切見えない','フォント・余白・色使いが古く、2010年代前半の印象のまま','トップページにメインビジュアルがなく、第一印象に何も残らない','代表者の顔写真がなく、名前だけが画像（PNG）で貼られているだけ','各グループ会社の個別ページがバラバラでデザインに統一感がない'],
+    fix:['施設・現場・スタッフの写真を撮影し、豊富な画像でページを構成する','トップページに印象的なファーストビュー（キャッチコピー＋画像）を設ける','グループ全体でデザインを統一し、ブランドとしての一体感を出す','フォント・余白・色を現代水準に刷新する'],
+    eff:['初めて訪問した取引先・求職者の「信頼感」が大きく向上する','「この会社はしっかりしている」という印象が先方に伝わる','競合との比較で見劣りしなくなる（石坂産業との差が縮まる）']},
+  seo:{label:'SEO・集客対策',icon:'🔍',
+    good:['社名「結南グループ」での検索では表示される','各グループ会社のページが個別URLで存在し、内部リンク構造はある'],
+    bad:['「廃棄物収集 茨城」「産業廃棄物 栃木」など地域×業種キーワードでほぼ上位表示されない','ページタイトルやメタディスクリプションが最適化されていない可能性が高い','各ページのテキスト量が少なく、Googleが評価するコンテンツが不足している','ブログ・ニュースなど定期更新コンテンツがなく、クロール頻度が低い','外部からのリンク（被リンク）を得る仕掛けが何もない'],
+    fix:['狙うキーワードを「地域名×サービス」で整理し、各ページタイトルに反映する','ページごとに適切なタイトルタグ・メタディスクリプションを設定する','「廃棄物処理の流れ」「よくある質問」など読まれやすいコンテンツを追加する','Googleビジネスプロフィールを整備し、地図検索対策を行う'],
+    eff:['エリア検索からの新規問い合わせが期待できる','競合サイトとの検索順位差が縮まる','継続的な集客チャネルが生まれる（広告費ゼロで）']},
+  content:{label:'コンテンツ更新・充実',icon:'📝',
+    good:['グループの沿革が詳しく記載されている（1979年〜現在まで）','採用情報が複数職種・複数会社分用意されている'],
+    bad:['最終更新が2018年または2023年で、それ以降の動きが全く見えない','ニュース・お知らせページが存在しない（石坂産業は2026年4月も更新中）','各事業の詳細が薄く「何を・どれくらい・どんな強みで」処理しているかが不明','処理実績・許可品目・処理能力などの具体的な数字がない','「第三工場が稼働準備中」という記載が残っており情報が古いまま放置されている'],
+    fix:['月1〜2回のニュース・お知らせを更新する運用ルールを作る','各事業の紹介ページを充実させ、具体的な数字や強みを記載する','「処理実績○○トン」「許可品目一覧」など信頼性を高めるデータを掲載する','古い情報（稼働準備中など）を最新状態に修正する'],
+    eff:['Googleのクロール頻度が上がり、SEO評価が改善される','「情報が新鮮な会社」という印象を与えられる','取引先が詳細を知りたいとき、サイトで完結できるようになる']},
+  mobile:{label:'モバイル対応',icon:'📱',
+    good:['致命的にレイアウトが壊れているわけではなく、最低限は表示される'],
+    bad:['レスポンシブデザインが不十分で、スマートフォンでの閲覧体験が最適化されていない','採用情報がPDFへのリンクのみで、スマホでは非常に見づらい','ボタンやリンクがスマホの指で押しにくいサイズになっている可能性がある','Googleはモバイルファーストインデックスを採用しており、モバイル未対応はSEO評価に直結する'],
+    fix:['全ページをレスポンシブデザインに対応させる','採用情報をPDFではなくWebページ上で閲覧できるようにする','タップしやすいボタンサイズ（最低44px）と十分な余白を確保する','Googleのモバイルフレンドリーテストで合格できる状態にする'],
+    eff:['スマートフォンユーザーの離脱率が下がる','GoogleのSEO評価が向上する（モバイル対応はランキング要因）','現場で働くスタッフや求職者がスマホで見たときの印象が改善する']},
+  story:{label:'ビジョン・ストーリー発信',icon:'💬',
+    good:['代表者名（宮田 泰信氏）は掲載されている','「地域社会の発展と環境づくりに貢献する」という方向性が一文ある'],
+    bad:['代表者の顔写真・メッセージページが存在しない（名前だけ掲載）','「なぜこの事業をしているのか」「どんな未来を目指しているのか」が伝わらない','1979年から続く歴史があるはずなのに、ストーリーとして語られていない','環境への取り組みや社会的意義が発信されておらず「ただの廃棄物業者」に見えてしまう','石坂産業の「Zero Waste Design」に相当する強いビジョンワードがない'],
+    fix:['代表者メッセージページを作成し、写真と文章で想いを伝える','企業理念・ビジョンを言語化してサイトに掲載する','グループの歩みを「沿革の羅列」ではなく「成長のストーリー」として書き直す','環境・地域社会への貢献活動があれば積極的に発信する'],
+    eff:['取引先が「この会社に頼みたい」と思う感情的な理由が生まれる','採用において「この会社で働きたい」という動機につながる','競合との差別化ポイントが生まれる（価格以外で選ばれる理由）']},
+  ops:{label:'運用体制の整備',icon:'⚙️',
+    good:['過去に制作会社に依頼した実績がある（完全に放置ではない）','複数職種・複数会社分の採用PDFが用意されており、一定の更新意識はある'],
+    bad:['誰がいつ更新するかのルールが存在しないと思われる','CMSの導入状況が不明（WordPressなどでなければ自社更新は困難）','2018年以降の更新履歴が見えず、制作会社との継続契約があるかも不明','Google Analyticsなどアクセス解析を活用している形跡がない'],
+    fix:['WordPressなどのCMSで再構築し、社内で更新できる体制を作る','更新担当者・更新頻度・更新内容を決めた「運用ルール」を設ける','Google Analytics・Google Search Consoleを導入しアクセス状況を把握する','定期的な見直し（年1回など）のタイミングをあらかじめ決めておく'],
+    eff:['外部委託コストを削減しながら情報を常に最新に保てる','アクセスデータをもとに改善の優先順位を判断できるようになる','サイトが「作りっぱなし」から「育てるもの」に変わる']},
+};
+
+const Q=[
+  {id:'purpose',num:'Q 1 / 4',text:'このウェブサイトの主な目的は何ですか？',sub:'最もあてはまるものを1つ選んでください',multi:false,
+   choices:[{id:'a',icon:'📋',title:'企業・グループの紹介',desc:'取引先・来客者に会社を知ってもらうパンフレット的な役割'},{id:'b',icon:'📣',title:'新規顧客・取引先の獲得',desc:'検索やWebからの問い合わせを増やしたい'},{id:'c',icon:'👥',title:'採用・求人活動の強化',desc:'求職者に向けて情報発信し、応募につなげたい'},{id:'d',icon:'❓',title:'まだ明確に決まっていない',desc:'何を目指すべきかも含めて整理したい'}]},
+  {id:'result',num:'Q 2 / 4',text:'現在、サイトから問い合わせや応募は来ていますか？',sub:'直近の状況をお聞かせください',multi:false,
+   choices:[{id:'a',icon:'📭',title:'ほとんど来ていない',desc:'サイト経由での接触がほぼない状態'},{id:'b',icon:'📬',title:'たまに来る程度',desc:'月に数件はあるが満足できていない'},{id:'c',icon:'📊',title:'把握していない',desc:'アクセス解析や問い合わせの追跡をしていない'}]},
+  {id:'issues',num:'Q 3 / 4',text:'現在のサイトで気になっている点はありますか？',sub:'当てはまるものをすべて選んでください（複数可）',multi:true,
+   choices:[{id:'design',icon:'🎨',title:'デザインが古い・見栄えが悪い',desc:'競合他社と比べて見劣りする印象がある'},{id:'update',icon:'📅',title:'情報が古い・更新されていない',desc:'最新の情報が反映されていない箇所がある'},{id:'mobile',icon:'📱',title:'スマホで見づらい',desc:'モバイル対応が不十分で閲覧しにくい'},{id:'seo',icon:'🔍',title:'検索で見つかりにくい',desc:'Google等で検索してもサイトが上位に出てこない'},{id:'story',icon:'💬',title:'会社の想いが伝わらない',desc:'何を大切にしている会社なのかが伝わっていない'}]},
+  {id:'ops',num:'Q 4 / 4',text:'今後のサイト更新・管理体制について、どのようにお考えですか？',sub:'最もあてはまるものを1つ選んでください',multi:false,
+   choices:[{id:'a',icon:'🏢',title:'社内でできるようにしたい',desc:'自社スタッフがある程度更新できる仕組みにしたい'},{id:'b',icon:'🤝',title:'引き続き外部に依頼したい',desc:'専門家に運用・管理を継続してお願いしたい'},{id:'c',icon:'🤔',title:'まだ決まっていない',desc:'体制も含めてこれから検討したい'}]},
+];
+
+let step=-1,answers={},openCards=new Set(),showAll=false;
+function $(){return document.getElementById('app')}
+
+function render(){
+  $().innerHTML='';
+  if(step===-1)renderStart();
+  else if(step<Q.length)renderQ(Q[step]);
+  else renderResult();
+}
+
+function renderStart(){
+  $().innerHTML=`<div class="card start-card">
+    <div class="start-logo">🌿</div>
+    <h2>4つの質問で<br>サイトの「本当の目的」を診断します</h2>
+    <p>ウェブサイトの目的が明確でないと、どんなに見栄えをよくしても効果が出ません。まずここから整理しましょう。</p>
+    <div class="start-steps">
+      ${[['1','目的の確認'],['2','現状の把握'],['3','課題の特定'],['4','運用体制']].map(([n,l])=>`<div><div class="start-step-num">${n}</div><div class="start-step-label">${l}</div></div>`).join('')}
+    </div>
+    <button class="btn-start" onclick="go()">診断をはじめる →</button>
+  </div>`;
+}
+
+function renderQ(q){
+  const pct=Math.round(step/Q.length*100);
+  const sel=answers[q.id]||(q.multi?[]:null);
+  const ok=q.multi?(sel&&sel.length>0):!!sel;
+  $().innerHTML=`
+    <div class="step-label"><span>STEP ${step+1} / ${Q.length}</span><span>${pct}%</span></div>
+    <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+    <div class="card">
+      <div class="question-num">${q.num}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="question-sub">${q.sub}</div>
+      ${q.multi?'<div class="multi-hint">複数選択できます</div>':''}
+      <div class="choices">${q.choices.map(c=>{
+        const s=q.multi?(sel&&sel.includes(c.id)):sel===c.id;
+        return`<button class="choice${s?' selected':''}" onclick="pick('${q.id}','${c.id}',${q.multi})">
+          <div class="choice-icon">${c.icon}</div>
+          <div><div class="choice-title">${c.title}</div><div class="choice-desc">${c.desc}</div></div>
+        </button>`;}).join('')}</div>
+      <div class="btn-row">
+        ${step>0?'<button class="btn-back" onclick="back()">← 戻る</button>':''}
+        <button class="btn-next" onclick="go()" ${!ok?'disabled':''}>${step===Q.length-1?'診断する →':'次へ →'}</button>
+      </div>
+    </div>`;
+}
+
+function pick(qId,cId,multi){
+  if(multi){if(!answers[qId])answers[qId]=[];const i=answers[qId].indexOf(cId);i>-1?answers[qId].splice(i,1):answers[qId].push(cId);}
+  else answers[qId]=cId;
+  render();
+}
+function go(){step++;render();scrollTo({top:0,behavior:'smooth'});}
+function back(){step--;render();scrollTo({top:0,behavior:'smooth'});}
+function restart(){step=-1;answers={};openCards=new Set();showAll=false;render();scrollTo({top:0,behavior:'smooth'});}
+
+function toggle(key){
+  openCards.has(key)?openCards.delete(key):openCards.add(key);
+  const b=document.getElementById('b-'+key),a=document.getElementById('a-'+key);
+  if(b)b.classList.toggle('open',openCards.has(key));
+  if(a)a.classList.toggle('open',openCards.has(key));
+}
+function toggleAll(){
+  showAll=!showAll;
+  const s=document.getElementById('all-sec');
+  if(s)s.style.display=showAll?'block':'none';
+  const btn=document.getElementById('all-btn');
+  if(btn)btn.textContent=showAll?'▲ 全項目を折りたたむ':'▼ 全6項目の詳細を見る';
+}
+
+function calcScores(){
+  const p=answers.purpose,r=answers.result,issues=answers.issues||[],ops=answers.ops;
+  let sc={design:25,seo:20,content:20,mobile:15,story:15,ops:10};
+  if(issues.includes('design'))sc.design+=40;
+  if(issues.includes('seo'))sc.seo+=40;
+  if(issues.includes('update'))sc.content+=40;
+  if(issues.includes('mobile'))sc.mobile+=40;
+  if(issues.includes('story'))sc.story+=40;
+  if(p==='b'){sc.seo+=30;sc.story+=20;}
+  if(p==='c'){sc.content+=30;sc.story+=20;}
+  if(p==='d'){sc.design+=10;sc.seo+=10;sc.content+=10;}
+  if(r==='a')sc.seo+=20;
+  if(r==='c')sc.ops+=40;
+  if(ops==='c'){sc.ops+=30;sc.content+=20;}
+  Object.keys(sc).forEach(k=>sc[k]=Math.min(sc[k],100));
+  return sc;
+}
+function bc(v){return v>=70?'#e05555':v>=45?'#f5a623':'#4aab78';}
+function pl(v){return v>=70?{t:'高',c:'#e05555'}:v>=45?{t:'中',c:'#f5a623'}:{t:'低',c:'#4aab78'};}
+function pc(v){return v>=70?'ph':v>=45?'pm':'pl';}
+function pt(v){return v>=70?{c:'th',t:'最優先'}:v>=45?{c:'tm',t:'重要'}:{c:'tl',t:'中期的に'};}
+
+function impCard(key,rank,scores){
+  const d=DETAIL[key],v=scores[key],tag=pt(v),isOpen=openCards.has(key);
+  const li=(arr)=>arr.map(t=>`<li>${t}</li>`).join('');
+  return`<div class="imp-card ${pc(v)}">
+    <div class="imp-card-header" onclick="toggle('${key}')">
+      <div class="imp-rank">${rank?String(rank).padStart(2,'0'):''}</div>
+      <div class="imp-icon-wrap">${d.icon}</div>
+      <div class="imp-header-body">
+        <div class="imp-header-title">${d.label}</div>
+        <div class="imp-header-sub">${d.fix[0]}</div>
+        <span class="imp-tag ${tag.c}">${tag.t}</span>
+      </div>
+      <div class="imp-arrow${isOpen?' open':''}" id="a-${key}">▼</div>
+    </div>
+    <div class="imp-body${isOpen?' open':''}" id="b-${key}">
+      <div class="imp-body-inner">
+        <div class="detail-block db-good">
+          <div class="detail-block-title"><div class="db-icon">✅</div><span>クリアできている点</span></div>
+          <ul class="dl">${li(d.good)}</ul>
+        </div>
+        <div class="detail-block db-bad">
+          <div class="detail-block-title"><div class="db-icon">❌</div><span>クリアできていない点</span></div>
+          <ul class="dl">${li(d.bad)}</ul>
+        </div>
+        <div class="detail-block db-fix">
+          <div class="detail-block-title"><div class="db-icon">🔧</div><span>改善案</span></div>
+          <ul class="dl">${li(d.fix)}</ul>
+        </div>
+        <div class="detail-block db-eff">
+          <div class="detail-block-title"><div class="db-icon">📈</div><span>改善したときの効果</span></div>
+          <ul class="dl">${li(d.eff)}</ul>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderResult(){
+  const p=answers.purpose,scores=calcScores();
+  const ORDER=['design','seo','content','mobile','story','ops'];
+  const top3=[...ORDER].sort((a,b)=>scores[b]-scores[a]).slice(0,3);
+  const rest=ORDER.filter(k=>!top3.includes(k));
+
+  let type;
+  if(p==='a')type={name:'企業パンフレット型',desc:'現状のサイトは「企業の名刺・パンフレット」として機能しています。基本情報は揃っていますが、時代に合ったデザインと情報鮮度のアップデートで、より良い第一印象を与えられます。',badge:'Brochure Type',bc:'#0f6e56',bb:'#e1f5ee'};
+  else if(p==='b')type={name:'集客・営業支援型',desc:'サイトを集客ツールとして活用するには、SEO対策・コンテンツ充実・問い合わせ導線の整備が不可欠です。現状は集客に最適化されていない状態です。',badge:'Marketing Type',bc:'#185fa5',bb:'#e6f1fb'};
+  else if(p==='c')type={name:'採用特化型',desc:'採用に力を入れるなら、職種ごとの詳細情報・現場の雰囲気・社員インタビューなどのコンテンツが必要です。現状はPDF配布にとどまっており求職者への訴求力が低い状態です。',badge:'Recruitment Type',bc:'#853b11',bb:'#faeeda'};
+  else type={name:'戦略設計から始める型',desc:'サイトの目的が未定の場合、まずビジネス戦略に合わせた「サイトの役割定義」が必要です。目的が明確になれば最適な改善の方向性が見えてきます。',badge:'Strategy First',bc:'#534ab7',bb:'#eeedfe'};
+
+  const effects=p==='c'
+    ?[{val:'2〜4倍',label:'採用応募数の期待増加'},{val:'3〜5倍',label:'採用ページ流入の増加'},{val:'高',label:'企業ブランドの印象向上'}]
+    :[{val:'+3〜5倍',label:'検索流入の期待増加率'},{val:'約60%',label:'スマホ閲覧の最適化'},{val:'月1〜3件',label:'新規問い合わせの目安'}];
+
+  $().innerHTML=`
+    <div class="step-label"><span>診断完了</span><span>100%</span></div>
+    <div class="progress-wrap"><div class="progress-bar" style="width:100%"></div></div>
+    <div class="card">
+      <div class="result-header">
+        <div class="result-badge" style="color:${type.bc};background:${type.bb}">${type.badge}</div>
+        <div class="result-type-name">${type.name}</div>
+        <div class="result-type-desc">${type.desc}</div>
+      </div>
+      <div class="divider"></div>
+      <div class="issues-section">
+        <div class="section-title">課題スコア</div>
+        ${ORDER.map(key=>{const v=scores[key];const p2=pl(v);return`
+          <div class="issue-row">
+            <div class="issue-label">${DETAIL[key].label}</div>
+            <div class="issue-bar-wrap"><div class="issue-bar" id="bar-${key}" style="width:0%;background:${bc(v)}"></div></div>
+            <div class="issue-priority" style="color:${p2.c}">${p2.t}</div>
+          </div>`;}).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="issues-section">
+        <div class="section-title">優先改善事項 Top 3 <span class="section-note">各項目をクリックすると詳細が開きます</span></div>
+        ${top3.map((key,i)=>impCard(key,i+1,scores)).join('')}
+      </div>
+      <button class="all-toggle-btn" id="all-btn" onclick="toggleAll()">▼ 全6項目の詳細を見る</button>
+      <div id="all-sec" style="display:none">
+        <div class="section-title" style="margin-top:.25rem">その他の改善項目</div>
+        ${rest.map(key=>impCard(key,null,scores)).join('')}
+      </div>
+      <div class="divider"></div>
+      <div class="issues-section">
+        <div class="section-title">改善後の期待効果</div>
+        <div class="effect-grid">${effects.map(e=>`
+          <div class="effect-card">
+            <div class="effect-val">${e.val}</div>
+            <div class="effect-label">${e.label}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restart()">↺ もう一度診断する</button>
+    </div>`;
+
+  setTimeout(()=>{
+    ORDER.forEach(key=>{
+      const bar=document.getElementById('bar-'+key);
+      if(bar)setTimeout(()=>{bar.style.width=scores[key]+'%';},80);
+    });
+  },100);
+}
+
+render();
+</script>
+</body>
+</html>
