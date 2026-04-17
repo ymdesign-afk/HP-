@@ -97,9 +97,10 @@ body{font-family:'Noto Sans JP',sans-serif;background:#f0f4f2;min-height:100vh;d
 
 /* 効果 */
 .effect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.effect-card{background:var(--gx);border-radius:var(--rs);padding:14px;text-align:center;border:1px solid #cde8da}
-.effect-val{font-family:'Montserrat',sans-serif;font-size:20px;font-weight:700;color:var(--g1);line-height:1;margin-bottom:4px}
-.effect-label{font-size:11px;color:var(--s3);line-height:1.4}
+.effect-card{background:var(--gx);border-radius:var(--rs);padding:16px 14px;text-align:center;border:1px solid #cde8da;display:flex;flex-direction:column}
+.effect-val{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:700;color:var(--g1);line-height:1.15;margin-bottom:5px}
+.effect-label{font-size:11px;color:var(--s2);line-height:1.4;font-weight:700;margin-bottom:8px}
+.effect-reason{font-size:10.5px;color:var(--s3);line-height:1.55;padding-top:8px;border-top:1px dashed rgba(45,122,82,.25);text-align:left}
 
 /* ボタン系 */
 .restart-btn{width:100%;padding:12px;border:1.5px solid var(--sp);border-radius:var(--rs);background:none;color:var(--s3);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;margin-top:.5rem}
@@ -314,9 +315,47 @@ function renderResult(){
   else if(p==='c')type={name:'採用特化型',desc:'採用に力を入れるなら、職種ごとの詳細情報・現場の雰囲気・社員インタビューなどのコンテンツが必要です。現状はPDF配布にとどまっており求職者への訴求力が低い状態です。',badge:'Recruitment Type',bc:'#853b11',bb:'#faeeda'};
   else type={name:'戦略設計から始める型',desc:'サイトの目的が未定の場合、まずビジネス戦略に合わせた「サイトの役割定義」が必要です。目的が明確になれば最適な改善の方向性が見えてきます。',badge:'Strategy First',bc:'#534ab7',bb:'#eeedfe'};
 
-  const effects=p==='c'
-    ?[{val:'2〜4倍',label:'採用応募数の期待増加'},{val:'3〜5倍',label:'採用ページ流入の増加'},{val:'高',label:'企業ブランドの印象向上'}]
-    :[{val:'+3〜5倍',label:'検索流入の期待増加率'},{val:'約60%',label:'スマホ閲覧の最適化'},{val:'月1〜3件',label:'新規問い合わせの目安'}];
+  /* 改善項目×目的タイプ別の効果候補 */
+  const EFFECT_MAP={
+    design:{
+      a:{val:'印象 +70%',label:'取引先からの第一印象の改善',reason:'写真・動画の追加と現代的デザインで、古い印象から脱却できるため'},
+      b:{val:'滞在時間 2倍',label:'サイト訪問者の離脱率改善',reason:'見やすいデザインで訪問者がサイト内を探索しやすくなるため'},
+      c:{val:'応募率 +50%',label:'求職者の興味喚起',reason:'現代的な見た目で若年層求職者の心理的ハードルが下がるため'},
+      d:{val:'印象 +70%',label:'ブランド信頼感の向上',reason:'企業としての信頼感が第一印象で伝わりやすくなるため'},
+    },
+    seo:{
+      a:{val:'流入 +2〜3倍',label:'社名以外での検索流入',reason:'社名検索頼みから脱却し、事業内容で見つけられるようになるため'},
+      b:{val:'流入 +3〜5倍',label:'地域×業種キーワード流入',reason:'「廃棄物処理 茨城」等の検索で上位表示されるようになるため'},
+      c:{val:'流入 +2〜4倍',label:'採用関連ワードの流入',reason:'「産廃 求人 茨城」等の職探しキーワードで見つかるため'},
+      d:{val:'流入 +2〜3倍',label:'検索からの訪問者増加',reason:'基本的なSEO対策で検索エンジンからの訪問者が増えるため'},
+    },
+    content:{
+      a:{val:'情報量 3倍',label:'サイトの情報密度向上',reason:'各事業・施設の詳細を充実させることで信頼性が高まるため'},
+      b:{val:'CV率 +30%',label:'問い合わせへの転換向上',reason:'具体的な実績・数字が問い合わせの判断材料になるため'},
+      c:{val:'応募率 +40%',label:'職場理解の深まり',reason:'現場の雰囲気・社員の声で入社後のイメージが湧きやすくなるため'},
+      d:{val:'月2回更新',label:'継続的なSEO評価向上',reason:'定期更新でGoogleのクロール頻度と評価が高まるため'},
+    },
+    mobile:{
+      a:{val:'約60%対応',label:'スマホユーザーの閲覧改善',reason:'スマホからの閲覧者が6割を占めるため必須の対応となるため'},
+      b:{val:'離脱率 -40%',label:'スマホからの離脱率改善',reason:'スマホで見やすくなることで検討段階での離脱を防げるため'},
+      c:{val:'約80%対応',label:'若年層求職者への対応',reason:'求職者の大半がスマホで職探しするため必須となるため'},
+      d:{val:'約60%対応',label:'モバイル利用への対応',reason:'現代のウェブ閲覧の主流がスマホであるため'},
+    },
+    story:{
+      a:{val:'印象 高',label:'企業ブランドの印象向上',reason:'ビジョン・想いの発信がブランド差別化に直結するため'},
+      b:{val:'選定率 +40%',label:'価格以外での選ばれる理由',reason:'「なぜこの会社か」が明確だと価格競争から抜け出せるため'},
+      c:{val:'応募率 +60%',label:'志望動機の明確化',reason:'共感できる企業理念が応募の強い動機になるため'},
+      d:{val:'独自性 高',label:'企業の独自色の発信',reason:'独自ワードを打ち出すことで競合との差別化が生まれるため'},
+    },
+    ops:{
+      a:{val:'月1〜2回',label:'情報更新の習慣化',reason:'無理なく続けられる頻度で情報を常に新鮮に保てるため'},
+      b:{val:'コスト -30%',label:'運用コストの削減',reason:'CMS導入で内製化すれば外部委託費を大幅に削減できるため'},
+      c:{val:'即日対応',label:'採用情報の鮮度維持',reason:'求人情報を速やかに反映でき機会損失を防げるため'},
+      d:{val:'コスト -30%',label:'運用体制の効率化',reason:'ルール整備で人と時間の効率化が実現できるため'},
+    },
+  };
+  const pKey=(p==='a'||p==='b'||p==='c')?p:'d';
+  const effects=top3.map(key=>EFFECT_MAP[key][pKey]);
 
   $().innerHTML=`
     <div class="step-label"><span>診断完了</span><span>100%</span></div>
@@ -354,6 +393,7 @@ function renderResult(){
           <div class="effect-card">
             <div class="effect-val">${e.val}</div>
             <div class="effect-label">${e.label}</div>
+            <div class="effect-reason">${e.reason}</div>
           </div>`).join('')}
         </div>
       </div>
