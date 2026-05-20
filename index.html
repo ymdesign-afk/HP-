@@ -2,413 +2,1445 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ウェブサイト目的診断</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>NCS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Montserrat:wght@600;700&display=swap');
-:root{--g1:#1a4d35;--g2:#2d7a52;--g3:#4aab78;--gp:#e8f4ee;--gx:#f2faf5;--s1:#1e2a32;--s2:#3d4f5c;--s3:#6b8090;--sp:#e8edf0;--red:#e05555;--yellow:#f5a623;--white:#fff;--r:12px;--rs:8px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans JP',sans-serif;background:#f0f4f2;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;color:var(--s1)}
-.wrapper{width:100%;max-width:860px}
-.header{text-align:center;margin-bottom:2.5rem}
-.header-label{display:inline-block;background:var(--g2);color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;padding:4px 14px;border-radius:20px;margin-bottom:.75rem;font-family:'Montserrat',sans-serif;text-transform:uppercase}
-.header h1{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:700;color:var(--g1);line-height:1.2;margin-bottom:.5rem}
-.header p{color:var(--s3);font-size:13px;line-height:1.7}
-.progress-wrap{background:var(--sp);border-radius:20px;height:6px;margin-bottom:2rem;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:20px;transition:width .5s ease}
-.step-label{display:flex;justify-content:space-between;font-size:12px;color:var(--s3);margin-bottom:.5rem}
-.card{background:var(--white);border-radius:var(--r);padding:2rem 2.5rem;box-shadow:0 2px 16px rgba(30,42,50,.07);animation:fadeUp .35s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.question-num{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--g2);text-transform:uppercase;margin-bottom:.5rem}
-.question-text{font-size:20px;font-weight:700;color:var(--s1);margin-bottom:.4rem;line-height:1.4}
-.question-sub{font-size:13px;color:var(--s3);margin-bottom:1.75rem}
-.multi-hint{display:inline-block;background:#fff7e6;color:#b07800;font-size:11px;padding:3px 10px;border-radius:20px;margin-bottom:1.25rem;border:1px solid #f5d080}
-.choices{display:flex;flex-direction:column;gap:10px}
-.choice{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;border:1.5px solid var(--sp);border-radius:var(--rs);cursor:pointer;transition:all .18s;background:var(--white);text-align:left;width:100%}
-.choice:hover{border-color:var(--g3);background:var(--gx)}
-.choice.selected{border-color:var(--g2);background:var(--gp)}
-.choice-icon{width:36px;height:36px;border-radius:8px;background:var(--sp);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:background .18s}
-.choice.selected .choice-icon{background:var(--g3)}
-.choice-title{font-size:15px;font-weight:700;color:var(--s1);margin-bottom:2px}
-.choice-desc{font-size:12px;color:var(--s3);line-height:1.5}
-.btn-row{display:flex;justify-content:flex-end;gap:10px;margin-top:1.75rem}
-.btn-back{padding:10px 20px;border:1.5px solid var(--sp);border-radius:var(--rs);background:none;color:var(--s3);font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s}
-.btn-back:hover{border-color:var(--s3);color:var(--s1)}
-.btn-next{padding:10px 28px;border:none;border-radius:var(--rs);background:var(--g2);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .15s}
-.btn-next:hover{background:var(--g1)}
-.btn-next:disabled{background:var(--sp);color:var(--s3);cursor:not-allowed}
-.result-header{text-align:center;margin-bottom:1.75rem}
-.result-badge{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:5px 16px;border-radius:20px;margin-bottom:.75rem;font-family:'Montserrat',sans-serif;text-transform:uppercase}
-.result-type-name{font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;color:var(--g1);margin-bottom:.4rem}
-.result-type-desc{font-size:13px;color:var(--s3);line-height:1.8;max-width:560px;margin:0 auto}
-.section-title{font-size:11px;font-weight:700;color:var(--s3);letter-spacing:.1em;text-transform:uppercase;font-family:'Montserrat',sans-serif;margin-bottom:1rem;border-bottom:1px solid var(--sp);padding-bottom:.5rem}
-.section-note{font-size:11px;font-weight:400;color:#bbb;text-transform:none;letter-spacing:0;margin-left:8px}
-.issues-section{margin-bottom:1.75rem}
-.issue-row{display:flex;align-items:center;gap:12px;margin-bottom:11px}
-.issue-label{font-size:13px;font-weight:700;width:160px;flex-shrink:0;color:var(--s1)}
-.issue-bar-wrap{flex:1;background:var(--sp);border-radius:20px;height:10px;overflow:hidden}
-.issue-bar{height:100%;border-radius:20px;transition:width .9s cubic-bezier(.22,1,.36,1)}
-.issue-priority{font-size:11px;font-weight:700;width:50px;text-align:right;flex-shrink:0}
-.divider{height:1px;background:var(--sp);margin:1.5rem 0}
+/* ── VARIABLES ── */
+:root {
+  --gold:    #C9A84C;
+  --gold-lt: #E2C97E;
+  --black:   #0A0A0A;
+  --dark:    #141414;
+  --card:    #1C1C1C;
+  --border:  #2A2A2A;
+  --white:   #F5F0E8;
+  --muted:   #888880;
+  --line-green: #06C755;
+  --radius: 8px;
+  --max: 480px;
+}
 
-/* アコーディオンカード */
-.imp-card{border-radius:var(--rs);border:1px solid var(--sp);overflow:hidden;margin-bottom:10px}
-.imp-card-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:background .15s;user-select:none}
-.imp-card.ph .imp-card-header{border-left:4px solid var(--red);background:#fff8f8}
-.imp-card.pm .imp-card-header{border-left:4px solid var(--yellow);background:#fffdf0}
-.imp-card.pl .imp-card-header{border-left:4px solid var(--g3);background:var(--gx)}
-.imp-card.ph .imp-card-header:hover{background:#ffefef}
-.imp-card.pm .imp-card-header:hover{background:#fffae0}
-.imp-card.pl .imp-card-header:hover{background:#eaf5ef}
-.imp-rank{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;width:26px;flex-shrink:0;color:var(--sp)}
-.imp-icon-wrap{font-size:20px;flex-shrink:0}
-.imp-header-body{flex:1;min-width:0}
-.imp-header-title{font-size:14px;font-weight:700;color:var(--s1);margin-bottom:2px}
-.imp-header-sub{font-size:12px;color:var(--s3);line-height:1.4}
-.imp-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:4px}
-.th{background:#fde8e8;color:var(--red)}
-.tm{background:#fff3cd;color:#b07800}
-.tl{background:var(--gp);color:var(--g1)}
-.imp-arrow{font-size:12px;color:var(--s3);transition:transform .3s;flex-shrink:0;width:20px;text-align:center}
-.imp-arrow.open{transform:rotate(180deg)}
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; background: var(--black); }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--black);
+  color: var(--white);
+  max-width: var(--max);
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+img { display: block; width: 100%; object-fit: cover; }
+a { text-decoration: none; color: inherit; }
 
-/* アコーディオン本体 */
-.imp-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.imp-body.open{max-height:1200px}
-.imp-body-inner{padding:4px 18px 18px 18px;border-top:1px solid var(--sp)}
-.detail-block{margin-top:14px}
-.detail-block-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;margin-bottom:8px}
-.db-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-.db-good .db-icon{background:#e8f4ee}
-.db-bad  .db-icon{background:#fde8e8}
-.db-fix  .db-icon{background:#e6f1fb}
-.db-eff  .db-icon{background:#fff3cd}
-.db-good .detail-block-title span{color:var(--g2)}
-.db-bad  .detail-block-title span{color:var(--red)}
-.db-fix  .detail-block-title span{color:#185fa5}
-.db-eff  .detail-block-title span{color:#b07800}
-.dl{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0;padding:0}
-.dl li{font-size:12px;color:var(--s2);line-height:1.6;padding-left:14px;position:relative}
-.dl li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%}
-.db-good .dl li::before{background:var(--g3)}
-.db-bad  .dl li::before{background:var(--red)}
-.db-fix  .dl li::before{background:#378add}
-.db-eff  .dl li::before{background:var(--yellow)}
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
 
-/* 効果 */
-.effect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.effect-card{background:var(--gx);border-radius:var(--rs);padding:16px 14px;text-align:center;border:1px solid #cde8da;display:flex;flex-direction:column}
-.effect-val{font-family:'Montserrat',sans-serif;font-size:19px;font-weight:700;color:var(--g1);line-height:1.15;margin-bottom:5px}
-.effect-label{font-size:11px;color:var(--s2);line-height:1.4;font-weight:700;margin-bottom:8px}
-.effect-reason{font-size:10.5px;color:var(--s3);line-height:1.55;padding-top:8px;border-top:1px dashed rgba(45,122,82,.25);text-align:left}
+/* ── HEADER ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 56px;
+  background: var(--dark);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.header-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  cursor: pointer;
+}
+.header-tel {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.header-tel a { color: var(--gold-lt); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+}
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--white);
+  transition: all 0.3s;
+}
 
-/* ボタン系 */
-.restart-btn{width:100%;padding:12px;border:1.5px solid var(--sp);border-radius:var(--rs);background:none;color:var(--s3);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;margin-top:.5rem}
-.restart-btn:hover{border-color:var(--g3);color:var(--g2)}
-.all-toggle-btn{width:100%;padding:11px;border:1.5px dashed #ccd6da;border-radius:var(--rs);background:none;color:var(--s3);font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all .15s;margin:4px 0 10px}
-.all-toggle-btn:hover{border-color:var(--g3);color:var(--g2)}
+/* ── DRAWER ── */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+}
+.drawer-overlay.open { display: block; }
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--dark);
+  border-left: 1px solid var(--border);
+  z-index: 201;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  padding: 56px 0 40px;
+}
+.drawer.open { right: 0; }
+.drawer-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--muted);
+}
+.drawer-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  color: var(--gold);
+  padding: 0 28px 28px;
+  letter-spacing: 0.12em;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-nav { padding: 20px 0; }
+.drawer-nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  transition: color 0.2s;
+}
+.drawer-nav a:hover, .drawer-nav a.active { color: var(--gold); }
+.drawer-nav a .nav-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.drawer-hours {
+  padding: 20px 28px 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  border-top: 1px solid var(--border);
+  margin: 0 0 0 0;
+}
 
-/* スタート画面 */
-.start-card{text-align:center;padding:3rem 2.5rem}
-.start-logo{width:64px;height:64px;background:var(--gp);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 1.5rem;border:2px solid #cde8da}
-.start-card h2{font-size:20px;font-weight:700;color:var(--s1);margin-bottom:.5rem;line-height:1.4}
-.start-card p{font-size:13px;color:var(--s3);line-height:1.8;margin-bottom:1.5rem;max-width:460px;margin-left:auto;margin-right:auto}
-.start-steps{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem}
-.start-step-num{width:28px;height:28px;border-radius:50%;background:var(--gp);color:var(--g1);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:1px solid #cde8da;font-family:'Montserrat',sans-serif}
-.start-step-label{font-size:11px;color:var(--s3)}
-.btn-start{padding:14px 40px;border:none;border-radius:var(--rs);background:var(--g2);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:background .15s}
-.btn-start:hover{background:var(--g1)}
+/* ── HERO ── */
+.hero {
+  position: relative;
+  height: 480px;
+  background: linear-gradient(160deg, #0e0e0e 0%, #1a1308 50%, #0e0e0e 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 24px 48px;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-badge {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gold-lt);
+  cursor: pointer;
+}
+.hero-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.hero-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.hero-sub {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 32px;
+  letter-spacing: 0.04em;
+}
+.hero-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn-tel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+.btn-tel:active { background: rgba(255,255,255,0.12); }
+.btn-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  background: var(--line-green);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s;
+}
+.btn-line:active { opacity: 0.85; }
+
+/* ── SECTION HEADERS ── */
+.sec-head {
+  padding: 32px 20px 0;
+}
+.sec-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.sec-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.sec-sub {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 32px 20px;
+}
+
+/* ── STAFF GRID (top / list) ── */
+.staff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 16px 0;
+}
+.staff-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.staff-card:active { transform: scale(0.98); border-color: var(--gold); }
+.staff-card-img {
+  height: 140px;
+  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.staff-card-body { padding: 10px 12px 12px; }
+.staff-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 2px;
+  letter-spacing: 0.04em;
+}
+.staff-card-age {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.staff-card-msg {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.staff-card-btn {
+  display: block;
+  text-align: center;
+  padding: 6px;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+}
+
+/* ── PRICE PREVIEW ── */
+.price-preview {
+  padding: 0 20px;
+}
+.price-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 16px 16px 20px;
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.price-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--gold);
+}
+.price-rank {
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 6px;
+}
+.price-amount {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.price-desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.price-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.price-more:active { border-color: var(--gold); color: var(--gold); }
+
+/* ── CONTACT METHODS ── */
+.contact-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 16px 16px 0;
+}
+.contact-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 8px;
+  text-align: center;
+}
+.contact-card-icon { font-size: 20px; margin-bottom: 6px; }
+.contact-card-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+.contact-card-desc {
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── TRUST ── */
+.trust-list {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.trust-icon { font-size: 18px; flex-shrink: 0; }
+.trust-title { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+.trust-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 40px;
+  background: var(--dark);
+  border-top: 1px solid var(--border);
+  padding: 20px 16px 12px;
+}
+.footer-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.footer-btn-tel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+}
+.footer-btn-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  background: var(--line-green);
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.footer-hours {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── PAGE: STAFF DETAIL ── */
+.detail-hero {
+  height: 300px;
+  background: linear-gradient(135deg, #1a1a1a, #252525);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--border);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  position: relative;
+}
+.detail-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  font-size: 13px;
+  color: var(--white);
+  cursor: pointer;
+  gap: 6px;
+}
+.detail-info { padding: 20px 20px 0; }
+.detail-name {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.detail-age { font-size: 13px; color: var(--muted); }
+.detail-rank {
+  font-size: 10px;
+  padding: 3px 10px;
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.stat-item { text-align: center; }
+.stat-val { font-size: 13px; font-weight: 500; color: var(--white); }
+.stat-key { font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.06em; }
+.detail-msg {
+  background: var(--card);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.detail-photos {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 6px;
+  padding: 0 20px;
+  margin-bottom: 0;
+}
+.detail-photo {
+  height: 72px;
+  background: var(--card);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.detail-reserve {
+  margin: 20px 20px 0;
+  background: var(--gold);
+  border-radius: var(--radius);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+/* ── PAGE: PRICE ── */
+.price-page { padding: 0; }
+.page-banner {
+  background: linear-gradient(135deg, #0e0e0e, #1a1308);
+  padding: 32px 20px 24px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.page-banner::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.07), transparent 70%);
+}
+.page-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 0.06em;
+}
+.page-sub {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.price-full { padding: 24px 20px 0; }
+.price-full-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 20px 20px 24px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.price-full-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--gold);
+}
+.pfcard-rank { font-size: 10px; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 8px; }
+.pfcard-amount {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.pfcard-time { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.pfcard-desc { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.option-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.option-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+}
+.option-title { font-size: 12px; color: var(--white); font-weight: 500; margin-bottom: 4px; }
+.option-note { font-size: 10px; color: var(--muted); }
+.campaign-list { padding: 0 20px; }
+.campaign-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.campaign-icon { font-size: 20px; }
+.campaign-title { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 2px; }
+.campaign-desc { font-size: 11px; color: var(--muted); }
+.faq-list { padding: 0 20px; }
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.faq-q {
+  font-size: 13px;
+  color: var(--white);
+  margin-bottom: 8px;
+  display: flex;
+  gap: 8px;
+}
+.faq-q::before { content: 'Q.'; color: var(--gold); font-weight: 500; flex-shrink: 0; }
+.faq-a {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  display: flex;
+  gap: 8px;
+}
+.faq-a::before { content: 'A.'; color: var(--muted); flex-shrink: 0; }
+
+/* ── PAGE: CONTACT ── */
+.contact-page-inner { padding: 24px 20px 0; }
+.contact-block {
+  margin-bottom: 16px;
+}
+.contact-block-label {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.contact-block-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.contact-block-main {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--white);
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+.contact-block-sub {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.hours-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hours-label { font-size: 11px; color: var(--muted); }
+.hours-val { font-size: 13px; color: var(--white); font-weight: 500; }
+
+/* ── FLOW ── */
+.flow-list { display: flex; flex-direction: column; gap: 8px; }
+.flow-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.flow-num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.flow-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.03em;
+}
+.flow-more {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.flow-more:active { border-color: var(--gold); color: var(--gold); }
+
+/* ── FLOW ── */
+/* ── FLOW DETAIL PAGE ── */
+.flow-detail-step {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+}
+.flow-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.flow-detail-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.flow-detail-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+.flow-detail-body p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+.flow-detail-links {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.flow-detail-link {
+  font-size: 12px;
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 20px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.flow-detail-link:active { background: rgba(201,168,76,0.1); }
+.flow-detail-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.flow-contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 46px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.flow-contact-tel {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+}
+.flow-contact-line { background: var(--line-green); color: #fff; }
+.flow-checklist {
+  list-style: none;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flow-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--white);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+.flow-checklist li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+.flow-note {
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.flow-note-title { font-size: 13px; font-weight: 500; color: var(--gold-lt); margin-bottom: 10px; }
+.flow-note ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.flow-note li { font-size: 12px; color: var(--muted); line-height: 1.6; padding-left: 12px; position: relative; }
+.flow-note li::before { content: '・'; position: absolute; left: 0; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page.active .hero,
+.page.active .sec-head,
+.page.active .staff-grid,
+.page.active .page-banner {
+  animation: fadeUp 0.4s ease both;
+}
 </style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="header">
-    <div class="header-label">Website Diagnosis</div>
-    <h1>ウェブサイト<br>目的診断ツール</h1>
-    <p>4つの質問に答えるだけで、<br>貴社のウェブサイトに必要な改善が明確になります。</p>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="overlay" onclick="closeMenu()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-close" onclick="closeMenu()">✕</div>
+  <div class="drawer-logo">NCS</div>
+  <nav class="drawer-nav">
+    <a href="#" onclick="goPage('top')"    data-page="top"><span class="nav-num">01</span>トップ</a>
+    <a href="#" onclick="goPage('staff')"  data-page="staff"><span class="nav-num">02</span>スタッフ一覧</a>
+    <a href="#" onclick="goPage('price')"  data-page="price"><span class="nav-num">03</span>料金表</a>
+    <a href="#" onclick="goPage('flow')"   data-page="flow"><span class="nav-num">04</span>ご利用の流れ</a>
+    <a href="#" onclick="goPage('contact')" data-page="contact"><span class="nav-num">05</span>連絡先</a>
+  </nav>
+  <div class="drawer-hours">
+    営業時間<br>AM 11:00 〜 翌 AM 3:00<br><br>
+    TEL: 080-XXXX-XXXX
   </div>
-  <div id="app"></div>
 </div>
+
+<!-- HEADER (共通) -->
+<header class="header">
+  <div class="header-logo" onclick="goPage('top')">NCS</div>
+  <div class="header-tel"><a href="tel:080XXXXXXXX">TEL: 080-XXXX-XXXX</a></div>
+  <div class="hamburger" onclick="openMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- ========== PAGE: TOP ========== -->
+<div class="page active" id="page-top">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge" onclick="goPage('contact')">日本語 ｜ 中国語</div>
+    <div class="hero-eyebrow">高級デリバリーヘルス・東京</div>
+    <h1 class="hero-title">安心・上質なサービス<br>忘れられない時間</h1>
+    <p class="hero-sub">最高級ランクのスタッフが、あなたの時間を特別に。<br>気軽に選べる、上質な時間。初心者さんも歓迎。</p>
+    <div class="hero-btns">
+      <a href="tel:080XXXXXXXX" class="btn-tel">📞 電話で予約</a>
+      <a href="#" class="btn-line">💬 LINEで予約</a>
+    </div>
+  </div>
+
+  <!-- TODAY'S STAFF -->
+  <div class="sec-head">
+    <div class="sec-label">本日の出勤</div>
+    <div class="sec-title">今日の出勤スタッフ</div>
+    <div class="sec-sub">本日ご予約いただけるスタッフです。気軽にご指名ください。</div>
+  </div>
+  <div class="staff-grid">
+    <div class="staff-card" onclick="goPage('detail')">
+      <div class="staff-card-img">PHOTO</div>
+      <div class="staff-card-body">
+        <div class="staff-card-name">さとう みゆ</div>
+        <div class="staff-card-age">25歳 ／ ★★ランク</div>
+        <div class="staff-card-msg">「穏やかな時間を、一緒に」</div>
+        <div class="staff-card-btn">指名予約する</div>
+      </div>
+    </div>
+    <div class="staff-card" onclick="goPage('detail')">
+      <div class="staff-card-img">PHOTO</div>
+      <div class="staff-card-body">
+        <div class="staff-card-name">たなか あおい</div>
+        <div class="staff-card-age">22歳 ／ ★ランク</div>
+        <div class="staff-card-msg">「初めての方もお気軽に」</div>
+        <div class="staff-card-btn">指名予約する</div>
+      </div>
+    </div>
+    <div class="staff-card" onclick="goPage('detail')">
+      <div class="staff-card-img">PHOTO</div>
+      <div class="staff-card-body">
+        <div class="staff-card-name">やまだ ことね</div>
+        <div class="staff-card-age">24歳 ／ ★★ランク</div>
+        <div class="staff-card-msg">「上質なひとときを」</div>
+        <div class="staff-card-btn">指名予約する</div>
+      </div>
+    </div>
+    <div class="staff-card" onclick="goPage('detail')">
+      <div class="staff-card-img">PHOTO</div>
+      <div class="staff-card-body">
+        <div class="staff-card-name">すずき りか</div>
+        <div class="staff-card-age">23歳 ／ ★ランク</div>
+        <div class="staff-card-msg">「笑顔でお迎えします」</div>
+        <div class="staff-card-btn">指名予約する</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PRICE PREVIEW -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">コースと料金</div>
+    <div class="sec-title">選べるプラン</div>
+    <div class="sec-sub">上質さを、自分のペースで選べます。</div>
+  </div>
+  <div class="price-preview" style="margin-top:16px">
+    <div class="price-card">
+      <div class="price-rank">★ スタンダード</div>
+      <div class="price-amount">¥10,000</div>
+      <div class="price-desc">60分 ／ 気軽に、気分転換したい時間</div>
+    </div>
+    <div class="price-card">
+      <div class="price-rank">★★ プレミアム</div>
+      <div class="price-amount">¥18,000</div>
+      <div class="price-desc">90分 ／ ゆったり、心がほぐれる時間</div>
+    </div>
+    <div class="price-more" onclick="goPage('price')">料金表をすべて見る →</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FLOW -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">予約の流れ</div>
+    <div class="sec-title">ご利用の流れ</div>
+  </div>
+  <div class="flow-list" style="margin-top:16px; padding:0 16px">
+    <div class="flow-item">
+      <div class="flow-num">1</div>
+      <div class="flow-text">在籍・料金を確認</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num">2</div>
+      <div class="flow-text">電話またはLINEでお問い合わせ</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num">3</div>
+      <div class="flow-text">希望日時・エリアをお伝えください</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num">4</div>
+      <div class="flow-text">スタッフから確認のご連絡</div>
+    </div>
+    <div class="flow-more" onclick="goPage('flow')">詳しい流れを見る</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TRUST -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">選ばれる理由</div>
+    <div class="sec-title">安心してご利用ください</div>
+  </div>
+  <div class="trust-list" style="margin-top:16px">
+    <div class="trust-item">
+      <div class="trust-icon">🔐</div>
+      <div>
+        <div class="trust-title">プライバシー保護</div>
+        <div class="trust-desc">お客様の情報は厳重に保護されます</div>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💎</div>
+      <div>
+        <div class="trust-title">上質なサービス</div>
+        <div class="trust-desc">最高級ランクのスタッフが丁寧に対応</div>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">😊</div>
+      <div>
+        <div class="trust-title">初心者さんも安心</div>
+        <div class="trust-desc">初めてのご質問も大歓迎です</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links">
+      <a href="#">プライバシーポリシー</a>
+      <a href="#">利用規約</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ========== PAGE: STAFF LIST ========== -->
+<div class="page" id="page-staff">
+  <div class="page-banner">
+    <div class="page-title">スタッフ一覧</div>
+    <div class="page-sub">優しさと上品さを兼ね備えたスタッフが揃っています。<br>「この人いいな」と感じたら、気軽にご指名ください。</div>
+  </div>
+  <div class="staff-grid" style="margin-top:16px">
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">さとう みゆ</div><div class="staff-card-age">25歳 ／ ★★ランク</div><div class="staff-card-msg">「穏やかな時間を」</div><div class="staff-card-btn">指名予約する</div></div></div>
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">たなか あおい</div><div class="staff-card-age">22歳 ／ ★ランク</div><div class="staff-card-msg">「お気軽にどうぞ」</div><div class="staff-card-btn">指名予約する</div></div></div>
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">やまだ ことね</div><div class="staff-card-age">24歳 ／ ★★ランク</div><div class="staff-card-msg">「上質なひとときを」</div><div class="staff-card-btn">指名予約する</div></div></div>
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">すずき りか</div><div class="staff-card-age">23歳 ／ ★ランク</div><div class="staff-card-msg">「笑顔でお迎え」</div><div class="staff-card-btn">指名予約する</div></div></div>
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">いとう なな</div><div class="staff-card-age">26歳 ／ ★★ランク</div><div class="staff-card-msg">「ゆっくり話しましょう」</div><div class="staff-card-btn">指名予約する</div></div></div>
+    <div class="staff-card" onclick="goPage('detail')"><div class="staff-card-img">PHOTO</div><div class="staff-card-body"><div class="staff-card-name">まつもと ゆい</div><div class="staff-card-age">21歳 ／ ★ランク</div><div class="staff-card-msg">「丁寧に対応します」</div><div class="staff-card-btn">指名予約する</div></div></div>
+  </div>
+  <footer class="footer">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links"><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></div>
+  </footer>
+</div>
+
+<!-- ========== PAGE: STAFF DETAIL ========== -->
+<div class="page" id="page-detail">
+  <div class="detail-hero">
+    <div class="detail-back" onclick="history.back(); goPage('staff')">← 一覧に戻る</div>
+    PHOTO
+  </div>
+  <div class="detail-info">
+    <div class="detail-name">さとう みゆ</div>
+    <div class="detail-meta">
+      <span class="detail-age">25歳</span>
+      <span class="detail-rank">★★ RANK</span>
+    </div>
+    <div class="detail-stats">
+      <div class="stat-item"><div class="stat-val">162</div><div class="stat-key">身長 cm</div></div>
+      <div class="stat-item"><div class="stat-val">47</div><div class="stat-key">体重 kg</div></div>
+      <div class="stat-item"><div class="stat-val">C</div><div class="stat-key">カップ</div></div>
+      <div class="stat-item"><div class="stat-val">東京</div><div class="stat-key">出身</div></div>
+    </div>
+    <div class="detail-msg">
+      「初めてのお客様も、リピーターさんも。あなたに合わせて、最高の時間を作ります。緊張されている方も、安心してお越しください。」
+    </div>
+  </div>
+  <div class="detail-photos">
+    <div class="detail-photo"></div>
+    <div class="detail-photo"></div>
+    <div class="detail-photo"></div>
+    <div class="detail-photo"></div>
+  </div>
+  <div class="detail-reserve">このスタッフを指名する</div>
+
+  <footer class="footer" style="margin-top:24px">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links"><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></div>
+  </footer>
+</div>
+
+<!-- ========== PAGE: PRICE ========== -->
+<div class="page" id="page-price">
+  <div class="page-banner">
+    <div class="page-title">料金表</div>
+    <div class="page-sub">「最安値じゃなくていい。その代わり、上質な時間が欲しい」<br>そんなあなたのための、複数のプランがあります。</div>
+  </div>
+
+  <div class="price-full">
+    <div class="price-full-card">
+      <div class="pfcard-rank">★ STANDARD COURSE</div>
+      <div class="pfcard-amount">¥10,000</div>
+      <div class="pfcard-time">60分</div>
+      <div class="pfcard-desc">気軽に、気分転換したい時間。<br>どのプランを選んでも、最高のスタッフが対応します。</div>
+    </div>
+    <div class="price-full-card">
+      <div class="pfcard-rank">★★ PREMIUM COURSE</div>
+      <div class="pfcard-amount">¥18,000</div>
+      <div class="pfcard-time">90分</div>
+      <div class="pfcard-desc">ゆったり、心がほぐれる時間。<br>特別な日のための、上質なひととき。</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPTIONS -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">Option</div>
+    <div class="sec-title">指名オプション</div>
+  </div>
+  <div class="price-full" style="margin-top:16px">
+    <div class="option-grid">
+      <div class="option-card">
+        <div class="option-title">指名なし</div>
+        <div class="option-note">おまかせ（お得）</div>
+      </div>
+      <div class="option-card">
+        <div class="option-title">指名あり</div>
+        <div class="option-note">ご希望のスタッフ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin-top:0"></div>
+
+  <!-- CAMPAIGN -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">Campaign</div>
+    <div class="sec-title">お得なキャンペーン</div>
+  </div>
+  <div class="campaign-list" style="margin-top:16px">
+    <div class="campaign-item">
+      <div class="campaign-icon">🎁</div>
+      <div><div class="campaign-title">初回限定割引</div><div class="campaign-desc">初めての方に特別価格でご案内</div></div>
+    </div>
+    <div class="campaign-item">
+      <div class="campaign-icon">🎁</div>
+      <div><div class="campaign-title">回数割引</div><div class="campaign-desc">リピーターへの感謝を込めて</div></div>
+    </div>
+    <div class="campaign-item">
+      <div class="campaign-icon">🎁</div>
+      <div><div class="campaign-title">平日割引</div><div class="campaign-desc">平日限定の特別価格</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FAQ -->
+  <div class="sec-head" style="padding-top:0">
+    <div class="sec-label">FAQ</div>
+    <div class="sec-title">よくある質問</div>
+  </div>
+  <div class="faq-list" style="margin-top:16px">
+    <div class="faq-item">
+      <div class="faq-q">指名料金はありますか？</div>
+      <div class="faq-a">はい。スタッフ詳細ページでご確認いただけます。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">キャンセルはできますか？</div>
+      <div class="faq-a">できます。早めにご連絡いただけると助かります。</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">初心者でも大丈夫ですか？</div>
+      <div class="faq-a">もちろんです。スタッフが優しくお迎えします。</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links"><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></div>
+  </footer>
+</div>
+
+<!-- ========== PAGE: CONTACT ========== -->
+<div class="page" id="page-contact">
+  <div class="page-banner">
+    <div class="page-title">連絡先</div>
+    <div class="page-sub">お電話・LINE・WeChat でお気軽にご連絡ください。</div>
+  </div>
+
+  <div class="contact-page-inner">
+    <!-- HOURS -->
+    <div class="contact-block">
+      <div class="contact-block-label">Hours</div>
+      <div class="hours-card">
+        <div class="hours-label">営業時間</div>
+        <div class="hours-val">AM 11:00 〜 翌 AM 3:00</div>
+      </div>
+    </div>
+
+    <!-- TEL -->
+    <div class="contact-block">
+      <div class="contact-block-label">📞 TEL</div>
+      <a href="tel:080XXXXXXXX" class="contact-block-card" style="display:block">
+        <div class="contact-block-main">080-XXXX-XXXX</div>
+        <div class="contact-block-sub">通話対応　AM 11:00 〜 翌 AM 3:00</div>
+      </a>
+    </div>
+
+    <!-- LINE -->
+    <div class="contact-block">
+      <div class="contact-block-label">💬 LINE</div>
+      <a href="#" class="contact-block-card" style="display:block">
+        <div class="contact-block-main">@XXXXXXXX</div>
+        <div class="contact-block-sub">プライベートなご連絡に　24時間受付</div>
+      </a>
+    </div>
+
+    <!-- WeChat -->
+    <div class="contact-block">
+      <div class="contact-block-label">🌐 ウィーチャット（WeChat）</div>
+      <a href="#" class="contact-block-card" style="display:block">
+        <div class="contact-block-main">XXXXXXXX</div>
+        <div class="contact-block-sub">中国語でのご予約・お問い合わせ歓迎</div>
+      </a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links"><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></div>
+  </footer>
+</div>
+
+<!-- ========== PAGE: FLOW ========== -->
+<div class="page" id="page-flow">
+  <div class="page-banner">
+    <div class="detail-back" onclick="goPage('top')" style="position:relative;height:auto;padding:0 0 16px;font-size:13px;color:var(--muted);">← トップに戻る</div>
+    <div class="page-title">ご利用の流れ</div>
+    <div class="page-sub">初めての方も安心してご利用いただけます。<br>ご不明な点はお気軽にお問い合わせください。</div>
+  </div>
+
+  <div style="padding:28px 16px 0">
+
+    <!-- STEP 1 -->
+    <div class="flow-detail-step">
+      <div class="flow-detail-head">
+        <div class="flow-detail-num">1</div>
+        <div class="flow-detail-title">在籍スタッフ・料金を確認</div>
+      </div>
+      <div class="flow-detail-body">
+        <p>まずはトップページまたはスタッフ一覧から、気になるスタッフをご確認ください。</p>
+        <p>料金表ページでコース・オプション・キャンペーン情報もご覧いただけます。</p>
+        <div class="flow-detail-links">
+          <div class="flow-detail-link" onclick="goPage('staff')">スタッフ一覧を見る →</div>
+          <div class="flow-detail-link" onclick="goPage('price')">料金表を見る →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="flow-detail-step">
+      <div class="flow-detail-head">
+        <div class="flow-detail-num">2</div>
+        <div class="flow-detail-title">お電話またはLINEでご連絡</div>
+      </div>
+      <div class="flow-detail-body">
+        <p>ご希望のコース・スタッフが決まりましたら、お電話またはLINEにてご連絡ください。</p>
+        <p>はじめての方も、スタッフが丁寧にご案内しますのでお気軽にどうぞ。</p>
+        <div class="flow-detail-contact">
+          <a href="tel:080XXXXXXXX" class="flow-contact-btn flow-contact-tel">📞 電話で問い合わせる</a>
+          <a href="#" class="flow-contact-btn flow-contact-line">💬 LINEで問い合わせる</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="flow-detail-step">
+      <div class="flow-detail-head">
+        <div class="flow-detail-num">3</div>
+        <div class="flow-detail-title">希望日時・エリアをお伝えください</div>
+      </div>
+      <div class="flow-detail-body">
+        <p>以下の内容をお伝えいただくとスムーズです。</p>
+        <ul class="flow-checklist">
+          <li>ご希望の日時</li>
+          <li>ご利用エリア（最寄り駅など）</li>
+          <li>ご希望のコース・時間</li>
+          <li>指名スタッフ（お決まりの場合）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="flow-detail-step">
+      <div class="flow-detail-head">
+        <div class="flow-detail-num">4</div>
+        <div class="flow-detail-title">スタッフから確認のご連絡</div>
+      </div>
+      <div class="flow-detail-body">
+        <p>スタッフよりご予約内容の確認をご連絡いたします。</p>
+        <p>ご不明な点や変更がある場合も、この時点でお気軽にお申し付けください。</p>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="flow-detail-step" style="border-bottom:none">
+      <div class="flow-detail-head">
+        <div class="flow-detail-num">5</div>
+        <div class="flow-detail-title">スタッフがお伺いします</div>
+      </div>
+      <div class="flow-detail-body">
+        <p>ご指定の場所へスタッフがお伺いします。ホテルや自宅など、ご希望の場所をお知らせください。</p>
+        <p>初めての方も、スタッフが最高の時間をご提供いたします。</p>
+      </div>
+    </div>
+
+    <!-- NOTE -->
+    <div class="flow-note">
+      <div class="flow-note-title">⚠️ ご注意</div>
+      <ul>
+        <li>18歳未満の方のご利用はお断りしております。</li>
+        <li>キャンセルの場合はお早めにご連絡ください。</li>
+        <li>お客様の個人情報は厳重に管理いたします。</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-btns">
+      <a href="tel:080XXXXXXXX" class="footer-btn-tel">📞 電話で予約</a>
+      <a href="#" class="footer-btn-line">💬 LINEで予約</a>
+    </div>
+    <div class="footer-hours">営業時間：AM 11:00 〜 翌 AM 3:00</div>
+    <div class="footer-links"><a href="#">プライバシーポリシー</a><a href="#">利用規約</a></div>
+  </footer>
+</div>
+
 <script>
-const DETAIL={
-  design:{label:'デザイン・見た目',icon:'🎨',
-    good:['グループ構成や事業内容が整理されてテキストで記載されている','ナビゲーションがシンプルで迷いにくい構造になっている'],
-    bad:['写真・動画がほぼ皆無。施設・車両・作業の様子が一切見えない','フォント・余白・色使いが古く、2010年代前半の印象のまま','トップページにメインビジュアルがなく、第一印象に何も残らない','代表者の顔写真がなく、名前だけが画像（PNG）で貼られているだけ','各グループ会社の個別ページがバラバラでデザインに統一感がない'],
-    fix:['施設・現場・スタッフの写真を撮影し、豊富な画像でページを構成する','トップページに印象的なファーストビュー（キャッチコピー＋画像）を設ける','グループ全体でデザインを統一し、ブランドとしての一体感を出す','フォント・余白・色を現代水準に刷新する'],
-    eff:['初めて訪問した取引先・求職者の「信頼感」が大きく向上する','「この会社はしっかりしている」という印象が先方に伝わる','競合との比較で見劣りしなくなる（石坂産業との差が縮まる）']},
-  seo:{label:'SEO・集客対策',icon:'🔍',
-    good:['社名「結南グループ」での検索では表示される','各グループ会社のページが個別URLで存在し、内部リンク構造はある'],
-    bad:['「廃棄物収集 栃木」「産業廃棄物 栃木」など地域×業種キーワードでほぼ上位表示されない','ページタイトルやメタディスクリプションが最適化されていない可能性が高い','各ページのテキスト量が少なく、Googleが評価するコンテンツが不足している','ブログ・ニュースなど定期更新コンテンツがなく、クロール頻度が低い','外部からのリンク（被リンク）を得る仕掛けが何もない'],
-    fix:['狙うキーワードを「地域名×サービス」で整理し、各ページタイトルに反映する','ページごとに適切なタイトルタグ・メタディスクリプションを設定する','「廃棄物処理の流れ」「よくある質問」など読まれやすいコンテンツを追加する','Googleビジネスプロフィールを整備し、地図検索対策を行う'],
-    eff:['エリア検索からの新規問い合わせが期待できる','競合サイトとの検索順位差が縮まる','継続的な集客チャネルが生まれる（広告費ゼロで）']},
-  content:{label:'コンテンツ更新・充実',icon:'📝',
-    good:['グループの沿革が詳しく記載されている（1979年〜現在まで）','採用情報が複数職種・複数会社分用意されている'],
-    bad:['最終更新が2018年または2023年で、それ以降の動きが全く見えない','ニュース・お知らせページが存在しない（石坂産業は2026年4月も更新中）','各事業の詳細が薄く「何を・どれくらい・どんな強みで」処理しているかが不明','処理実績・許可品目・処理能力などの具体的な数字がない','「第三工場が稼働準備中」という記載が残っており情報が古いまま放置されている'],
-    fix:['月1〜2回のニュース・お知らせを更新する運用ルールを作る','各事業の紹介ページを充実させ、具体的な数字や強みを記載する','「処理実績○○トン」「許可品目一覧」など信頼性を高めるデータを掲載する','古い情報（稼働準備中など）を最新状態に修正する'],
-    eff:['Googleのクロール頻度が上がり、SEO評価が改善される','「情報が新鮮な会社」という印象を与えられる','取引先が詳細を知りたいとき、サイトで完結できるようになる']},
-  mobile:{label:'モバイル対応',icon:'📱',
-    good:['致命的にレイアウトが壊れているわけではなく、最低限は表示される'],
-    bad:['レスポンシブデザインが不十分で、スマートフォンでの閲覧体験が最適化されていない','採用情報がPDFへのリンクのみで、スマホでは非常に見づらい','ボタンやリンクがスマホの指で押しにくいサイズになっている可能性がある','Googleはモバイルファーストインデックスを採用しており、モバイル未対応はSEO評価に直結する'],
-    fix:['全ページをレスポンシブデザインに対応させる','採用情報をPDFではなくWebページ上で閲覧できるようにする','タップしやすいボタンサイズ（最低44px）と十分な余白を確保する','Googleのモバイルフレンドリーテストで合格できる状態にする'],
-    eff:['スマートフォンユーザーの離脱率が下がる','GoogleのSEO評価が向上する（モバイル対応はランキング要因）','現場で働くスタッフや求職者がスマホで見たときの印象が改善する']},
-  story:{label:'ビジョン・ストーリー発信',icon:'💬',
-    good:['代表者名（宮田 泰信氏）は掲載されている','「地域社会の発展と環境づくりに貢献する」という方向性が一文ある'],
-    bad:['代表者の顔写真・メッセージページが存在しない（名前だけ掲載）','「なぜこの事業をしているのか」「どんな未来を目指しているのか」が伝わらない','1979年から続く歴史があるはずなのに、ストーリーとして語られていない','環境への取り組みや社会的意義が発信されておらず「ただの廃棄物業者」に見えてしまう','石坂産業の「Zero Waste Design」に相当する強いビジョンワードがない'],
-    fix:['代表者メッセージページを作成し、写真と文章で想いを伝える','企業理念・ビジョンを言語化してサイトに掲載する','グループの歩みを「沿革の羅列」ではなく「成長のストーリー」として書き直す','環境・地域社会への貢献活動があれば積極的に発信する'],
-    eff:['取引先が「この会社に頼みたい」と思う感情的な理由が生まれる','採用において「この会社で働きたい」という動機につながる','競合との差別化ポイントが生まれる（価格以外で選ばれる理由）']},
-  ops:{label:'運用体制の整備',icon:'⚙️',
-    good:['過去に制作会社に依頼した実績がある（完全に放置ではない）','複数職種・複数会社分の採用PDFが用意されており、一定の更新意識はある'],
-    bad:['誰がいつ更新するかのルールが存在しないと思われる','CMSの導入状況が不明（WordPressなどでなければ自社更新は困難）','2018年以降の更新履歴が見えず、制作会社との継続契約があるかも不明','Google Analyticsなどアクセス解析を活用している形跡がない'],
-    fix:['WordPressなどのCMSで再構築し、社内で更新できる体制を作る','更新担当者・更新頻度・更新内容を決めた「運用ルール」を設ける','Google Analytics・Google Search Consoleを導入しアクセス状況を把握する','定期的な見直し（年1回など）のタイミングをあらかじめ決めておく'],
-    eff:['外部委託コストを削減しながら情報を常に最新に保てる','アクセスデータをもとに改善の優先順位を判断できるようになる','サイトが「作りっぱなし」から「育てるもの」に変わる']},
-};
-
-const Q=[
-  {id:'purpose',num:'Q 1 / 4',text:'このウェブサイトの主な目的は何ですか？',sub:'最もあてはまるものを1つ選んでください',multi:false,
-   choices:[{id:'a',icon:'📋',title:'企業・グループの紹介',desc:'取引先・来客者に会社を知ってもらうパンフレット的な役割'},{id:'b',icon:'📣',title:'新規顧客・取引先の獲得',desc:'検索やWebからの問い合わせを増やしたい'},{id:'c',icon:'👥',title:'採用・求人活動の強化',desc:'求職者に向けて情報発信し、応募につなげたい'},{id:'d',icon:'❓',title:'まだ明確に決まっていない',desc:'何を目指すべきかも含めて整理したい'}]},
-  {id:'result',num:'Q 2 / 4',text:'現在、サイトから問い合わせや応募は来ていますか？',sub:'直近の状況をお聞かせください',multi:false,
-   choices:[{id:'a',icon:'📭',title:'ほとんど来ていない',desc:'サイト経由での接触がほぼない状態'},{id:'b',icon:'📬',title:'たまに来る程度',desc:'月に数件はあるが満足できていない'},{id:'c',icon:'📊',title:'把握していない',desc:'アクセス解析や問い合わせの追跡をしていない'}]},
-  {id:'issues',num:'Q 3 / 4',text:'現在のサイトで気になっている点はありますか？',sub:'当てはまるものをすべて選んでください（複数可）',multi:true,
-   choices:[{id:'design',icon:'🎨',title:'デザインが古い・見栄えが悪い',desc:'競合他社と比べて見劣りする印象がある'},{id:'update',icon:'📅',title:'情報が古い・更新されていない',desc:'最新の情報が反映されていない箇所がある'},{id:'mobile',icon:'📱',title:'スマホで見づらい',desc:'モバイル対応が不十分で閲覧しにくい'},{id:'seo',icon:'🔍',title:'検索で見つかりにくい',desc:'Google等で検索してもサイトが上位に出てこない'},{id:'story',icon:'💬',title:'会社の想いが伝わらない',desc:'何を大切にしている会社なのかが伝わっていない'}]},
-  {id:'ops',num:'Q 4 / 4',text:'今後のサイト更新・管理体制について、どのようにお考えですか？',sub:'最もあてはまるものを1つ選んでください',multi:false,
-   choices:[{id:'a',icon:'🏢',title:'社内でできるようにしたい',desc:'自社スタッフがある程度更新できる仕組みにしたい'},{id:'b',icon:'🤝',title:'引き続き外部に依頼したい',desc:'専門家に運用・管理を継続してお願いしたい'},{id:'c',icon:'🤔',title:'まだ決まっていない',desc:'体制も含めてこれから検討したい'}]},
-];
-
-let step=-1,answers={},openCards=new Set(),showAll=false;
-function $(){return document.getElementById('app')}
-
-function render(){
-  $().innerHTML='';
-  if(step===-1)renderStart();
-  else if(step<Q.length)renderQ(Q[step]);
-  else renderResult();
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + id);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  // nav highlight
+  document.querySelectorAll('.drawer-nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === id);
+  });
+  closeMenu();
 }
 
-function renderStart(){
-  $().innerHTML=`<div class="card start-card">
-    <div class="start-logo">🌿</div>
-    <h2>4つの質問で<br>サイトの「本当の目的」を診断します</h2>
-    <p>ウェブサイトの目的が明確でないと、どんなに見栄えをよくしても効果が出ません。まずここから整理しましょう。</p>
-    <div class="start-steps">
-      ${[['1','目的の確認'],['2','現状の把握'],['3','課題の特定'],['4','運用体制']].map(([n,l])=>`<div><div class="start-step-num">${n}</div><div class="start-step-label">${l}</div></div>`).join('')}
-    </div>
-    <button class="btn-start" onclick="go()">診断をはじめる →</button>
-  </div>`;
+function openMenu() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeMenu() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
 }
 
-function renderQ(q){
-  const pct=Math.round(step/Q.length*100);
-  const sel=answers[q.id]||(q.multi?[]:null);
-  const ok=q.multi?(sel&&sel.length>0):!!sel;
-  $().innerHTML=`
-    <div class="step-label"><span>STEP ${step+1} / ${Q.length}</span><span>${pct}%</span></div>
-    <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
-    <div class="card">
-      <div class="question-num">${q.num}</div>
-      <div class="question-text">${q.text}</div>
-      <div class="question-sub">${q.sub}</div>
-      ${q.multi?'<div class="multi-hint">複数選択できます</div>':''}
-      <div class="choices">${q.choices.map(c=>{
-        const s=q.multi?(sel&&sel.includes(c.id)):sel===c.id;
-        return`<button class="choice${s?' selected':''}" onclick="pick('${q.id}','${c.id}',${q.multi})">
-          <div class="choice-icon">${c.icon}</div>
-          <div><div class="choice-title">${c.title}</div><div class="choice-desc">${c.desc}</div></div>
-        </button>`;}).join('')}</div>
-      <div class="btn-row">
-        ${step>0?'<button class="btn-back" onclick="back()">← 戻る</button>':''}
-        <button class="btn-next" onclick="go()" ${!ok?'disabled':''}>${step===Q.length-1?'診断する →':'次へ →'}</button>
-      </div>
-    </div>`;
-}
-
-function pick(qId,cId,multi){
-  if(multi){if(!answers[qId])answers[qId]=[];const i=answers[qId].indexOf(cId);i>-1?answers[qId].splice(i,1):answers[qId].push(cId);}
-  else answers[qId]=cId;
-  render();
-}
-function go(){step++;render();scrollTo({top:0,behavior:'smooth'});}
-function back(){step--;render();scrollTo({top:0,behavior:'smooth'});}
-function restart(){step=-1;answers={};openCards=new Set();showAll=false;render();scrollTo({top:0,behavior:'smooth'});}
-
-function toggle(key){
-  openCards.has(key)?openCards.delete(key):openCards.add(key);
-  const b=document.getElementById('b-'+key),a=document.getElementById('a-'+key);
-  if(b)b.classList.toggle('open',openCards.has(key));
-  if(a)a.classList.toggle('open',openCards.has(key));
-}
-function toggleAll(){
-  showAll=!showAll;
-  const s=document.getElementById('all-sec');
-  if(s)s.style.display=showAll?'block':'none';
-  const btn=document.getElementById('all-btn');
-  if(btn)btn.textContent=showAll?'▲ 全項目を折りたたむ':'▼ 全6項目の詳細を見る';
-}
-
-function calcScores(){
-  const p=answers.purpose,r=answers.result,issues=answers.issues||[],ops=answers.ops;
-  let sc={design:25,seo:20,content:20,mobile:15,story:15,ops:10};
-  if(issues.includes('design'))sc.design+=40;
-  if(issues.includes('seo'))sc.seo+=40;
-  if(issues.includes('update'))sc.content+=40;
-  if(issues.includes('mobile'))sc.mobile+=40;
-  if(issues.includes('story'))sc.story+=40;
-  if(p==='b'){sc.seo+=30;sc.story+=20;}
-  if(p==='c'){sc.content+=30;sc.story+=20;}
-  if(p==='d'){sc.design+=10;sc.seo+=10;sc.content+=10;}
-  if(r==='a')sc.seo+=20;
-  if(r==='c')sc.ops+=40;
-  if(ops==='c'){sc.ops+=30;sc.content+=20;}
-  Object.keys(sc).forEach(k=>sc[k]=Math.min(sc[k],100));
-  return sc;
-}
-function bc(v){return v>=70?'#e05555':v>=45?'#f5a623':'#4aab78';}
-function pl(v){return v>=70?{t:'高',c:'#e05555'}:v>=45?{t:'中',c:'#f5a623'}:{t:'低',c:'#4aab78'};}
-function pc(v){return v>=70?'ph':v>=45?'pm':'pl';}
-function pt(v){return v>=70?{c:'th',t:'最優先'}:v>=45?{c:'tm',t:'重要'}:{c:'tl',t:'中期的に'};}
-
-function impCard(key,rank,scores){
-  const d=DETAIL[key],v=scores[key],tag=pt(v),isOpen=openCards.has(key);
-  const li=(arr)=>arr.map(t=>`<li>${t}</li>`).join('');
-  return`<div class="imp-card ${pc(v)}">
-    <div class="imp-card-header" onclick="toggle('${key}')">
-      <div class="imp-rank">${rank?String(rank).padStart(2,'0'):''}</div>
-      <div class="imp-icon-wrap">${d.icon}</div>
-      <div class="imp-header-body">
-        <div class="imp-header-title">${d.label}</div>
-        <div class="imp-header-sub">${d.fix[0]}</div>
-        <span class="imp-tag ${tag.c}">${tag.t}</span>
-      </div>
-      <div class="imp-arrow${isOpen?' open':''}" id="a-${key}">▼</div>
-    </div>
-    <div class="imp-body${isOpen?' open':''}" id="b-${key}">
-      <div class="imp-body-inner">
-        <div class="detail-block db-good">
-          <div class="detail-block-title"><div class="db-icon">✅</div><span>クリアできている点</span></div>
-          <ul class="dl">${li(d.good)}</ul>
-        </div>
-        <div class="detail-block db-bad">
-          <div class="detail-block-title"><div class="db-icon">❌</div><span>クリアできていない点</span></div>
-          <ul class="dl">${li(d.bad)}</ul>
-        </div>
-        <div class="detail-block db-fix">
-          <div class="detail-block-title"><div class="db-icon">🔧</div><span>改善案</span></div>
-          <ul class="dl">${li(d.fix)}</ul>
-        </div>
-        <div class="detail-block db-eff">
-          <div class="detail-block-title"><div class="db-icon">📈</div><span>改善したときの効果</span></div>
-          <ul class="dl">${li(d.eff)}</ul>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderResult(){
-  const p=answers.purpose,scores=calcScores();
-  const ORDER=['design','seo','content','mobile','story','ops'];
-  const top3=[...ORDER].sort((a,b)=>scores[b]-scores[a]).slice(0,3);
-  const rest=ORDER.filter(k=>!top3.includes(k));
-
-  let type;
-  if(p==='a')type={name:'企業パンフレット型',desc:'現状のサイトは「企業の名刺・パンフレット」として機能しています。基本情報は揃っていますが、時代に合ったデザインと情報鮮度のアップデートで、より良い第一印象を与えられます。',badge:'Brochure Type',bc:'#0f6e56',bb:'#e1f5ee'};
-  else if(p==='b')type={name:'集客・営業支援型',desc:'サイトを集客ツールとして活用するには、SEO対策・コンテンツ充実・問い合わせ導線の整備が不可欠です。現状は集客に最適化されていない状態です。',badge:'Marketing Type',bc:'#185fa5',bb:'#e6f1fb'};
-  else if(p==='c')type={name:'採用特化型',desc:'採用に力を入れるなら、職種ごとの詳細情報・現場の雰囲気・社員インタビューなどのコンテンツが必要です。現状はPDF配布にとどまっており求職者への訴求力が低い状態です。',badge:'Recruitment Type',bc:'#853b11',bb:'#faeeda'};
-  else type={name:'戦略設計から始める型',desc:'サイトの目的が未定の場合、まずビジネス戦略に合わせた「サイトの役割定義」が必要です。目的が明確になれば最適な改善の方向性が見えてきます。',badge:'Strategy First',bc:'#534ab7',bb:'#eeedfe'};
-
-  /* 改善項目×目的タイプ別の効果候補 */
-  const EFFECT_MAP={
-    design:{
-      a:{val:'印象 +70%',label:'取引先からの第一印象の改善',reason:'写真・動画の追加と現代的デザインで、古い印象から脱却できるため'},
-      b:{val:'滞在時間 2倍',label:'サイト訪問者の離脱率改善',reason:'見やすいデザインで訪問者がサイト内を探索しやすくなるため'},
-      c:{val:'応募率 +50%',label:'求職者の興味喚起',reason:'現代的な見た目で若年層求職者の心理的ハードルが下がるため'},
-      d:{val:'印象 +70%',label:'ブランド信頼感の向上',reason:'企業としての信頼感が第一印象で伝わりやすくなるため'},
-    },
-    seo:{
-      a:{val:'流入 +2〜3倍',label:'社名以外での検索流入',reason:'社名検索頼みから脱却し、事業内容で見つけられるようになるため'},
-      b:{val:'流入 +3〜5倍',label:'地域×業種キーワード流入',reason:'「廃棄物処理 栃木」等の検索で上位表示されるようになるため'},
-      c:{val:'流入 +2〜4倍',label:'採用関連ワードの流入',reason:'「産廃 求人 栃木」等の職探しキーワードで見つかるため'},
-      d:{val:'流入 +2〜3倍',label:'検索からの訪問者増加',reason:'基本的なSEO対策で検索エンジンからの訪問者が増えるため'},
-    },
-    content:{
-      a:{val:'情報量 3倍',label:'サイトの情報密度向上',reason:'各事業・施設の詳細を充実させることで信頼性が高まるため'},
-      b:{val:'CV率 +30%',label:'問い合わせへの転換向上',reason:'具体的な実績・数字が問い合わせの判断材料になるため'},
-      c:{val:'応募率 +40%',label:'職場理解の深まり',reason:'現場の雰囲気・社員の声で入社後のイメージが湧きやすくなるため'},
-      d:{val:'月2回更新',label:'継続的なSEO評価向上',reason:'定期更新でGoogleのクロール頻度と評価が高まるため'},
-    },
-    mobile:{
-      a:{val:'約60%対応',label:'スマホユーザーの閲覧改善',reason:'スマホからの閲覧者が6割を占めるため必須の対応となるため'},
-      b:{val:'離脱率 -40%',label:'スマホからの離脱率改善',reason:'スマホで見やすくなることで検討段階での離脱を防げるため'},
-      c:{val:'約80%対応',label:'若年層求職者への対応',reason:'求職者の大半がスマホで職探しするため必須となるため'},
-      d:{val:'約60%対応',label:'モバイル利用への対応',reason:'現代のウェブ閲覧の主流がスマホであるため'},
-    },
-    story:{
-      a:{val:'印象 高',label:'企業ブランドの印象向上',reason:'ビジョン・想いの発信がブランド差別化に直結するため'},
-      b:{val:'選定率 +40%',label:'価格以外での選ばれる理由',reason:'「なぜこの会社か」が明確だと価格競争から抜け出せるため'},
-      c:{val:'応募率 +60%',label:'志望動機の明確化',reason:'共感できる企業理念が応募の強い動機になるため'},
-      d:{val:'独自性 高',label:'企業の独自色の発信',reason:'独自ワードを打ち出すことで競合との差別化が生まれるため'},
-    },
-    ops:{
-      a:{val:'月1〜2回',label:'情報更新の習慣化',reason:'無理なく続けられる頻度で情報を常に新鮮に保てるため'},
-      b:{val:'コスト -30%',label:'運用コストの削減',reason:'CMS導入で内製化すれば外部委託費を大幅に削減できるため'},
-      c:{val:'即日対応',label:'採用情報の鮮度維持',reason:'求人情報を速やかに反映でき機会損失を防げるため'},
-      d:{val:'コスト -30%',label:'運用体制の効率化',reason:'ルール整備で人と時間の効率化が実現できるため'},
-    },
-  };
-  const pKey=(p==='a'||p==='b'||p==='c')?p:'d';
-  const effects=top3.map(key=>EFFECT_MAP[key][pKey]);
-
-  $().innerHTML=`
-    <div class="step-label"><span>診断完了</span><span>100%</span></div>
-    <div class="progress-wrap"><div class="progress-bar" style="width:100%"></div></div>
-    <div class="card">
-      <div class="result-header">
-        <div class="result-badge" style="color:${type.bc};background:${type.bb}">${type.badge}</div>
-        <div class="result-type-name">${type.name}</div>
-        <div class="result-type-desc">${type.desc}</div>
-      </div>
-      <div class="divider"></div>
-      <div class="issues-section">
-        <div class="section-title">課題スコア</div>
-        ${ORDER.map(key=>{const v=scores[key];const p2=pl(v);return`
-          <div class="issue-row">
-            <div class="issue-label">${DETAIL[key].label}</div>
-            <div class="issue-bar-wrap"><div class="issue-bar" id="bar-${key}" style="width:0%;background:${bc(v)}"></div></div>
-            <div class="issue-priority" style="color:${p2.c}">${p2.t}</div>
-          </div>`;}).join('')}
-      </div>
-      <div class="divider"></div>
-      <div class="issues-section">
-        <div class="section-title">優先改善事項 Top 3 <span class="section-note">各項目をクリックすると詳細が開きます</span></div>
-        ${top3.map((key,i)=>impCard(key,i+1,scores)).join('')}
-      </div>
-      <button class="all-toggle-btn" id="all-btn" onclick="toggleAll()">▼ 全6項目の詳細を見る</button>
-      <div id="all-sec" style="display:none">
-        <div class="section-title" style="margin-top:.25rem">その他の改善項目</div>
-        ${rest.map(key=>impCard(key,null,scores)).join('')}
-      </div>
-      <div class="divider"></div>
-      <div class="issues-section">
-        <div class="section-title">改善後の期待効果</div>
-        <div class="effect-grid">${effects.map(e=>`
-          <div class="effect-card">
-            <div class="effect-val">${e.val}</div>
-            <div class="effect-label">${e.label}</div>
-            <div class="effect-reason">${e.reason}</div>
-          </div>`).join('')}
-        </div>
-      </div>
-      <button class="restart-btn" onclick="restart()">↺ もう一度診断する</button>
-    </div>`;
-
-  setTimeout(()=>{
-    ORDER.forEach(key=>{
-      const bar=document.getElementById('bar-'+key);
-      if(bar)setTimeout(()=>{bar.style.width=scores[key]+'%';},80);
-    });
-  },100);
-}
-
-render();
+// prevent default on internal links
+document.querySelectorAll('.drawer-nav a').forEach(a => {
+  a.addEventListener('click', e => e.preventDefault());
+});
 </script>
 </body>
 </html>
